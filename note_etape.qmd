@@ -139,21 +139,7 @@ L'étude de la famille n'est donc qu'une porte d'entrée pour expliquer la réus
 
 Dans ce contexte, nous nous demanderons : Dans quelle mesure les interactions entre élève et structure familiale jouent dans la formation d'un capital mathématique ? Ce qui nous amènera à trouver quels élèves performent en mathématiques.
 
-Comme annoncé nous répondrons au problème en suivant la structure suivante :
-
-I\) L'environnement familial comme socle de la réussite des élèves en mathématiques
-
-A. L'accès aux ressources matérielles : un enjeux du succès scolaire
-
-B. La transmission du capital scientifique
-
-II\) L'élève : une personnalité, un caractère et une pensée qui assure un niveau mathématique
-
-A. Le "self-made" student ? Une analyse psychosociale de la prophétie auto-réalisatrice
-
-B. Une vision psychologique et personnelle adaptée pour un meilleur niveau ?
-
-III\) À la recherche du profil performant
+Nous répondrons au problème en montrant que l'environnement familial est le socle de la réussite des élèves en mathématique. Cela passe par des ressources matérielles mais aussi par la transmission d'un capitale sientifique. La personnalité de l'éléve sera par la suite étudié pour voir quel impacte elle a sur sa réussite. C'est ainsi que nous aboutirons à un profil de l'éléve performant en mathématique.
 
 <!-- CONFIGURATION BDD -->
 ```{r, include=FALSE}
@@ -351,6 +337,9 @@ Au fil de cette partie, nous avons pu mettre en lumière que l'échec ou la réu
 Les résultats suggèrent que les élèves issus de familles où les parents possèdent un niveau d'études supérieur obtiennent, en moyenne, de meilleurs scores en mathématiques. Ce phénomène illustre le poids du bagage académique familial dans la réussite scolaire.
 
 ```{r}
+#| column: page
+#| fig-align: center
+
 df <- cbind(niveau_en_math,variable_Pisa)
 # On crée la variable du niveau d'études maximum dans la famille
 df <- df %>%
@@ -364,7 +353,9 @@ mediane_niv_enf_fonc_niv_max_fam <- df %>%
 
 ggplot(data = mediane_niv_enf_fonc_niv_max_fam, mapping= aes(x = niveau_famille_max, y = mediane)) +
   geom_point(size = 5, color = "red") +
-  scale_x_discrete(labels = c(
+  scale_x_discrete(
+    limits = rev,
+    labels = c(
     "1" = "Enseignement post-secondaire\nnon-supérieur / plus",
     "2" = "Enseignement secondaire\n(2nd cycle)",
     "3" = "Enseignement secondaire\n(1er cycle)",
@@ -373,7 +364,7 @@ ggplot(data = mediane_niv_enf_fonc_niv_max_fam, mapping= aes(x = niveau_famille_
   )) +
   labs(
     title = "Performance en mathématiques selon le niveau d'étude maximum des parents",
-    x = "Niveau d'étude maximum de la famille",
+    x = "Niveau d'étude maximum des parents",
     y = "Médiane des performances en mathématiques",
     caption = paste0("Source : PISA 2022, OCDE,
     \nChamp : Élèves de 15 ans (nés entre 2005 et 2008) issus de 81 pays.")
@@ -406,7 +397,7 @@ Taille de l'effet (Eta-carré) :
 print(coef_corr)
 ```
 
-### Interprétation
+#### Interprétation
 La p-value étant largement inférieure au seuil de 0,05, nous pouvons affirmer que la différence de niveau en mathématiques selon le diplôme des parents est statistiquement significative.
 
 Par ailleurs, l'Eta-carré nous indique que le niveau d'études parental explique environ 7,1 % de la variance des résultats en mathématiques. Si ce pourcentage peut sembler numériquement modeste, il représente en réalité un effet notable en sciences sociales. Il confirme l'influence décisive du bagage académique familial, tout en rappelant logiquement que la réussite de l'élève dépend d'une multitude d'autres facteurs (environnement scolaire, pédagogie, travail personnel, etc.).
@@ -419,6 +410,10 @@ Pour approfondir cette dynamique, nous pouvons formuler l'hypothèse que ce nive
 Croisons maintenant le niveau d'études des parents avec un indicateur classique de ce capital culturel : le nombre de livres présents au domicile.
 
 ```{r}
+#| column: page
+#| fig-align: center
+#| fig-height: 5
+
 df_livres <- df %>%
   filter(!is.na(niveau_famille_max) & !is.na(ST255Q01JA)) %>%
   mutate(niveau_famille_max = as.factor(niveau_famille_max),
@@ -465,16 +460,16 @@ test_chi2 <- chisq.test(tableau)
 print(test_chi2)
 ```
 
-### Interprétation
+#### Interprétation
 La p-value étant extrêmement proche de zéro (largement inférieure à 0,05), nous rejetons l'hypothèse d'indépendance. Les deux variables sont très fortement dépendantes. Le niveau d'études maximum des parents est donc intimement corrélé à la mise en place d'un environnement culturel et matériel propice à l'apprentissage (ici, l'accès aux livres).
 
 Il est alors intéressant d'isoler le facteur de la richesse : à niveau de vie (ou richesse matérielle) égal, les enfants dont les parents sont les plus diplômés réussissent-ils toujours mieux en mathématiques ?
 
 ```{r}
 #| column: page
+#| fig-align: center
 #| fig-width: 12
 #| fig-height: 6
-#| fig-align: center
 
 
 mediane_niv_enf_fonc_niv_max_fam_harmoniser <- df %>%
