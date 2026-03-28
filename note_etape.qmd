@@ -114,8 +114,9 @@ I) L’environnement familial comme socle de la réussite des élèves en mathé
   A. L’accès aux ressources matérielles reste un enjeux du succès scolaire 
   B. La transmission familiale du capital scientifique explique les résultats en maths
 II) L’élève : une personnalité, un caractère et une pensée qui assure un niveau mathématique 
-  A. Le “self-made” student ? Une analyse psychosociale de la prophétie auto-réalisatrice
-  B. Une vision psychologique et personnelle adaptée pour un meilleur niveau ?
+  A. Le sex une différence fondamentale.
+  B. Le “self-made” student ? Une analyse psychosociale de la prophétie auto-réalisatrice
+  C. Une vision psychologique et personnelle adaptée pour un meilleur niveau ?
 III) La performance en mathématiques résulte d’une position spécifique dans un espace structuré par les ressources familiales et les dispositions psychosociales 
   A) Les élèves performants cumulent des ressources sociales et des dispositions psychologiques favorables 
     i) Le cumul des capitaux et des dispositions accroît fortement la probabilité d’appartenir au groupe performant
@@ -524,6 +525,34 @@ Ce graphique est révélateur : en suivant n'importe quelle courbe de niveau de 
 
 L'environnement et les différents "capital" ont ainsi une réelle corrélation avec la performance des élèves et nous avons solidement pu assurer le lien de causalité.  
 Dans l'optique de décrire des profils plus complets des élèves, Nous allons chercher des paramètres psychologiques, psychosociaux, plus centrés sur l'élève lui-même et son état d'esprit.  
+
+## A. Le sex, une différence fondamentale.
+
+```{r}
+
+niveau_selon_sex <- df %>%
+  filter(!is.na(ST004D01T)) %>%
+  group_by(ST004D01T) %>%
+  summarise(moyenne = mean(score_math))
+
+niveau_selon_sex$ST004D01T <- factor(niveau_selon_sex$ST004D01T)
+
+ggplot(data = niveau_selon_sex, mapping = aes(y = moyenne, x = ST004D01T)) + 
+  geom_point(size = 4, color = "red") +
+  scale_x_discrete(
+    labels = c(
+      "1" = "Femme",
+      "2" = "Homme"
+    )
+  )
+
+```
+```{r}
+niv_femme = niveau_selon_sex[1,"moyenne"]
+niv_homme = niveau_selon_sex[2,"moyenne"]
+ecart = abs(niv_femme- niv_homme) / niv_femme
+```
+
 
 ## A. Le "self-made" student ? Une analyse psychosociale de la prophétie auto-réalisatrice
 
