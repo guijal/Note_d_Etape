@@ -110,6 +110,17 @@ RICCIARDI Olivier\\
 \tableofcontents
 
 
+I) L’environnement familial comme socle de la réussite des élèves en mathématiques 
+  A. L’accès aux ressources matérielles reste un enjeux du succès scolaire 
+  B. La transmission familiale du capital scientifique explique les résultats en maths
+II) L’élève : une personnalité, un caractère et une pensée qui assure un niveau mathématique 
+  A. Le “self-made” student ? Une analyse psychosociale de la prophétie auto-réalisatrice
+  B. Une vision psychologique et personnelle adaptée pour un meilleur niveau ?
+III) La performance en mathématiques résulte d’une position spécifique dans un espace structuré par les ressources familiales et les dispositions psychosociales 
+  A) Les élèves performants cumulent des ressources sociales et des dispositions psychologiques favorables 
+    i) Le cumul des capitaux et des dispositions accroît fortement la probabilité d’appartenir au groupe performant
+    ii) Les élèves performants occupent une zone spécifique de l’espace socio-psychologique
+
 
 # Avant-propos
 
@@ -863,7 +874,7 @@ L’hypothèse retenue est que l’excellence en mathématiques correspond à un
 
 # III) La performance en mathématiques résulte d’une position spécifique dans un espace structuré par les ressources familiales et les dispositions psychosociales
 
-## A) Les élèves performants cumulent des ressources sociales et des dispositions psychologiques favorables
+## A. Les élèves performants cumulent des ressources sociales et des dispositions psychologiques favorables
 
 ### i) Le cumul des capitaux et des dispositions accroît fortement la probabilité d’appartenir au groupe performant
 
