@@ -114,7 +114,7 @@ I) L’environnement familial comme socle de la réussite des élèves en mathé
   A. L’accès aux ressources matérielles reste un enjeux du succès scolaire 
   B. La transmission familiale du capital scientifique explique les résultats en maths
 II) L’élève : une personnalité, un caractère et une pensée qui assure un niveau mathématique 
-  A. Le sex une différence fondamentale.
+  A. Le sexe une différence fondamentale.
   B. Le “self-made” student ? Une analyse psychosociale de la prophétie auto-réalisatrice
   C. Une vision psychologique et personnelle adaptée pour un meilleur niveau ?
 III) La performance en mathématiques résulte d’une position spécifique dans un espace structuré par les ressources familiales et les dispositions psychosociales 
@@ -526,7 +526,7 @@ Ce graphique est révélateur : en suivant n'importe quelle courbe de niveau de 
 L'environnement et les différents "capital" ont ainsi une réelle corrélation avec la performance des élèves et nous avons solidement pu assurer le lien de causalité.  
 Dans l'optique de décrire des profils plus complets des élèves, Nous allons chercher des paramètres psychologiques, psychosociaux, plus centrés sur l'élève lui-même et son état d'esprit.  
 
-## A. Le sex, une différence fondamentale.
+## A. Le sexe, une différence fondamentale.
 
 ```{r}
 
@@ -557,7 +557,7 @@ niv_homme = niveau_selon_sex[[2,"moyenne"]]
 ecart = (abs(niv_femme- niv_homme) / niv_femme)*100
 print(ecart)
 ```
-fois plus performant qu'une femme en mathématique. Cela nous montre que ce n'est pas une caractéristique majeure pour la performance en mathématique bien qu'il y ait des ingégalité de genre dans le monde. Cela peut être car l'étude est réalisé sur des individu de 16ans. On a donc pas encore une sureprésentation de sex masculin dans le domaine des sciences car le choix d'étudier les sciences n'est pas encore fait.
+fois plus performant qu'une femme en mathématique. Cela nous montre que ce n'est pas une caractéristique majeure pour la performance en mathématique bien qu'il y ait des ingégalité de genre dans le monde. Cela peut être car l'étude est réalisé sur des individu de 16ans. On a donc pas encore une sureprésentation de sexe masculin dans le domaine des sciences car le choix d'étudier les sciences n'est pas encore fait.
 
 ## A. Le "self-made" student ? Une analyse psychosociale de la prophétie auto-réalisatrice
 
