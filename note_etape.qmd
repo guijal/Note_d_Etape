@@ -741,17 +741,16 @@ cat("- Rapport de corrélation (Eta2) :", round(eta2, 4), "\n")
 ggplot(df_anxiete, aes(x = as.factor(ST292Q03JA), y = score_math, fill = as.factor(ST292Q03JA))) +
   geom_violin(alpha = 0.5, draw_quantiles = c(0.25, 0.5, 0.75), color = "black") +
   scale_x_discrete(labels = c(
-    "1" = "Tout à fait d'accord",
-    "2" = "D'accord",
-    "3" = "Pas d'accord",
-    "4" = "Pas du tout d'accord"
+    "1" = "très anxieux",
+    "2" = "un peu anxieux",
+    "3" = "pas trop anxieux",
+    "4" = "pas anxieux"
   )) +
   labs(
     title = "Impact de l'anxiété sur la performance en mathématiques",
     x = "Niveau d'accord",
     y = "Score en Mathématiques",
-    caption = "Lecture : 'Tout à fait d'accord' indique une anxiété très élevée.
-    \nSource : PISA 2022, OCDE,
+    caption = "Lecture : 'Source : PISA 2022, OCDE,
     \nChamp : Élèves de 15 ans (nés entre 2005 et 2008) issus de 81 pays."
   ) +
   theme_minimal() +
@@ -797,7 +796,6 @@ ggplot(stats_conf, aes(x = Niveau, y = mediane_score, color = Question_Label, gr
   # Annotation pour la ligne rouge
   annotate("text", x = 0.6, y = global_mediane + 10, label = "Médiane mondiale", color = "red", fontface = "italic", hjust = 0) +
   # Courbes par item
-  geom_line(size = 1.1, alpha = 0.7) +
   geom_point(size = 2.5) +
   scale_x_continuous(breaks = 1:4, labels = c("Pas du tout\nconfiant", "Peu\nconfiant", "Confiant", "Très\nconfiant")) +
   labs(
