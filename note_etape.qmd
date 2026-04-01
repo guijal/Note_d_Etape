@@ -547,12 +547,17 @@ ggplot(data = niveau_selon_sex, mapping = aes(y = moyenne, x = ST004D01T)) +
   )
 
 ```
-```{r}
-niv_femme = niveau_selon_sex[1,"moyenne"]
-niv_homme = niveau_selon_sex[2,"moyenne"]
-ecart = abs(niv_femme- niv_homme) / niv_femme
-```
 
+
+
+Un homme est
+```{r}
+niv_femme = niveau_selon_sex[[1,"moyenne"]]
+niv_homme = niveau_selon_sex[[2,"moyenne"]]
+ecart = (abs(niv_femme- niv_homme) / niv_femme)*100
+print(ecart)
+```
+fois plus performant qu'une femme en mathématique. Cela nous montre que ce n'est pas une caractéristique majeure pour la performance en mathématique bien qu'il y ait des ingégalité de genre dans le monde. Cela peut être car l'étude est réalisé sur des individu de 16ans. On a donc pas encore une sureprésentation de sex masculin dans le domaine des sciences.
 
 ## A. Le "self-made" student ? Une analyse psychosociale de la prophétie auto-réalisatrice
 
