@@ -285,9 +285,9 @@ eta2_livres <- ss_livres[1] / sum(ss_livres)
 cat("Eta-carré du nombre de livres :", round(eta2_livres, 4), "\n")
 ```
 
-Le test d'analyse de variance (ANOVA) révèle un Êta-carré de 0.2082. D'un point de vue statistique, ce résultat indique que près de 21 % des écarts de performance en mathématiques entre les élèves sont expliqués par le seul indicateur du nombre de livres au domicile.
+Le test d'analyse de variance (ANOVA) révèle un Êta-carré de 0.2082. D'un point de vue statistique, ce résultat indique que près de 21 % des écarts de performance en mathématiques entre les élèves sont lié à l'indicateur du nombre de livres au domicile.
 
-Dans le champ des sciences sociales et de l'éducation, il s'agit d'une taille d'effet considérée comme très forte. Ce chiffre exceptionnellement élevé démontre la puissance du déterminisme socio-culturel : l'accès aux ressources matérielles et culturelles dans l'environnement familial n'est pas un simple facteur d'influence, mais bien un prédicteur majeur de la réussite scolaire.
+Dans le champ des sciences sociales et de l'éducation, il s'agit d'une taille d'effet considérée comme très forte. Ce chiffre élevé démontre la puissance du déterminisme socio-culturel : l'accès aux ressources matérielles et culturelles dans l'environnement familial n'est pas un simple facteur d'influence, mais bien un prédicteur majeur de la réussite scolaire.
 
 Le second graphique porte sur une condition d'existence fondamentale : ne pas avoir faim.
 
