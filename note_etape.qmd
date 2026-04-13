@@ -147,7 +147,7 @@ La variable clé est celle mesurant le niveau en maths. Elle est référencée s
 Pour sélectionner les autres variables d'intérêts, nous avons suivi notre plan. Tout d'abord l'ensemble des variables qui permettent de définir l'héritage de l'élève : les ressources matérielles, le niveau en mathématique des parents... 
 Pour la deuxième partie les variables d'intérêts sont celles qui étudient la psychologie et le mindset des élèves. La confiance en eux, la persévérance... La troisième partie reprend les variables étudiées précedemment et les regroupe.
 
-# Introduction
+# Introdu
 
 Des parents ingénieurs, une bibliothèque remplie ou du soutien scolaire privé ? Cela ne peut qu'amener au succès scolaire.
 
