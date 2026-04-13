@@ -122,7 +122,8 @@ III) La performance en mathématiques résulte d’une position spécifique dans
     i) Le cumul des capitaux et des dispositions accroît fortement la probabilité d’appartenir au groupe performant
     ii) Les élèves performants occupent une zone spécifique de l’espace socio-psychologique
     
-    
+
+<!--
 échanger partie I et II
 
 
@@ -130,7 +131,7 @@ changer titre avec notion d'héritage
 
 partie sur la discipline de l'éléve
 
-terminer le sujet avec un clustering
+terminer le sujet avec un clustering-->
 
 
 # Avant-propos
