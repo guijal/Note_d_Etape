@@ -109,6 +109,7 @@ RICCIARDI Olivier\\
 
 \tableofcontents
 
+# 12345678910
 
 I) L’environnement familial comme socle de la réussite des élèves en mathématiques 
   A. L’accès aux ressources matérielles reste un enjeux du succès scolaire 
@@ -121,6 +122,16 @@ III) La performance en mathématiques résulte d’une position spécifique dans
   A) Les élèves performants cumulent des ressources sociales et des dispositions psychologiques favorables 
     i) Le cumul des capitaux et des dispositions accroît fortement la probabilité d’appartenir au groupe performant
     ii) Les élèves performants occupent une zone spécifique de l’espace socio-psychologique
+    
+    
+échanger partie I et II
+
+
+changer titre avec notion d'héritage
+
+partie sur la discipline de l'éléve
+
+terminer le sujet avec un clustering
 
 
 # Avant-propos
@@ -311,7 +322,7 @@ Ce graphique aborde la précarité sous son angle le plus primaire : l'incapacit
 
 L'effet "seuil" de la précarité : Le groupe majoritaire des élèves qui ne sautent "Jamais / Presque jamais" de repas affiche une distribution des scores tirée vers le haut, avec une médiane nettement supérieure aux autres groupes.
 
-Le décrochage des performances : Dès que l'élève bascule dans l'insécurité alimentaire, même de façon occasionnelle ("Environ 1 fois par semaine"), on observe un affaissement brutal de la boîte à moustaches. La médiane chute significativement, et la moustache inférieure s'étire vers les scores les plus bas de l'évaluation PISA. Les catégories d'insécurité sévère ("2-3 fois par semaine" et "Presque tous les jours") confirment ce maintien à un niveau de performance très faible.
+Le décrochage des performances : Dès que l'élève bascule dans l'insécurité alimentaire, même de façon occasionnelle ("Environ 1 fois par semaine"). La médiane chute significativement, et la moustache inférieure s'étire vers les scores les plus bas de l'évaluation PISA. Les catégories d'insécurité sévère ("2-3 fois par semaine" et "Presque tous les jours") confirment ce maintien à un niveau de performance très faible.
 
 ```{r}
 # Modèle ANOVA
@@ -526,7 +537,7 @@ Ce graphique est révélateur : en suivant n'importe quelle courbe de niveau de 
 L'environnement et les différents "capital" ont ainsi une réelle corrélation avec la performance des élèves et nous avons solidement pu assurer le lien de causalité.  
 Dans l'optique de décrire des profils plus complets des élèves, Nous allons chercher des paramètres psychologiques, psychosociaux, plus centrés sur l'élève lui-même et son état d'esprit.  
 
-## A. Le sexe, une différence fondamentale.
+## A. Le sexe, une différence fondamentale ?
 
 ```{r}
 
