@@ -204,6 +204,7 @@ L'environnement et les différents "capital" ont ainsi une réelle corrélation 
 Dans l'optique de décrire des profils plus complets des élèves, Nous allons chercher des paramètres psychologiques, psychosociaux, plus centrés sur l'élève lui-même et son état d'esprit.  
 
 ## A. Le sexe, une différence fondamentale ?
+# TEST ICICICICIICICIIC
 
 ```{r}
 
