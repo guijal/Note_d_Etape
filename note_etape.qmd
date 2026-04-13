@@ -109,15 +109,16 @@ RICCIARDI Olivier\\
 
 \tableofcontents
 
-# 12345678910
 
-I) L’environnement familial comme socle de la réussite des élèves en mathématiques 
-  A. L’accès aux ressources matérielles reste un enjeux du succès scolaire 
-  B. La transmission familiale du capital scientifique explique les résultats en maths
-II) L’élève : une personnalité, un caractère et une pensée qui assure un niveau mathématique 
+
+I) L’élève : une personnalité, un caractère et une pensée qui assure un niveau mathématique 
   A. Le sexe une différence fondamentale.
   B. Le “self-made” student ? Une analyse psychosociale de la prophétie auto-réalisatrice
   C. Une vision psychologique et personnelle adaptée pour un meilleur niveau ?
+
+II) L’environnement familial comme socle de la réussite des élèves en mathématiques 
+  A. L’accès aux ressources matérielles reste un enjeux du succès scolaire 
+  B. La transmission familiale du capital scientifique explique les résultats en maths
 III) La performance en mathématiques résulte d’une position spécifique dans un espace structuré par les ressources familiales et les dispositions psychosociales 
   A) Les élèves performants cumulent des ressources sociales et des dispositions psychologiques favorables 
     i) Le cumul des capitaux et des dispositions accroît fortement la probabilité d’appartenir au groupe performant
@@ -194,344 +195,9 @@ df <- cbind(niveau_en_math,variable_Pisa) #contient toutes les données nécessa
 global_mediane <- median(df$score_math, na.rm = TRUE)
 ```
 
-# I) L'environnement familial comme socle de la réussite des élèves en mathématiques
 
-## A. L'accès aux ressources matérielles reste un enjeux du succès scolaire {#mix}
 
-```{r, echo=FALSE, results="hide"}
-
-df_brut <- readRDS("pisa_restraint.rds")
-
-
-variables_a_garder <- c(
-  "ST004D01T",  # Sexe
-  "ST255Q01JA", # Nombre de livres
-  "ST258Q01JA", # Assez d'argent pour manger (Insécurité alimentaire)
-  "PV1MATH", "PV2MATH", "PV3MATH", "PV4MATH", "PV5MATH", 
-  "PV6MATH", "PV7MATH", "PV8MATH", "PV9MATH", "PV10MATH"
-)
-
-df_reduit <- df_brut %>% 
-  select(any_of(variables_a_garder))
-
-
-df <- df_reduit %>%
-  # Calcul de la moyenne en maths
-  mutate(MATH_MOYENNE = rowMeans(select(., starts_with("PV") & ends_with("MATH")), na.rm = TRUE)) %>%
-  
-
-
-  filter(!is.na(ST258Q01JA) & ST258Q01JA != 9) %>% 
-  mutate(
-    Faim_Frequence = case_when(
-      ST258Q01JA == 1 ~ "Jamais/Presque jamais",
-      ST258Q01JA == 2 ~ "Environ 1 fois/semaine",
-      ST258Q01JA == 3 ~ "2-3 fois/semaine",
-      ST258Q01JA == 4 ~ "Presque tous les jours",
-      TRUE ~ NA_character_
-    ),
-    Faim_Frequence = factor(Faim_Frequence, levels = c("Jamais/Presque jamais", 
-                                                       "Environ 1 fois/semaine", 
-                                                       "2-3 fois/semaine", 
-                                                       "Presque tous les jours")),
-    Insecurite_Alim = ifelse(ST258Q01JA > 1, "Oui", "Non")
-  ) %>%
-  
-  # Nettoyage Sexe (ST004)
-  filter(!is.na(ST004D01T)) %>%
-  mutate(Sexe = ifelse(ST004D01T == 1, "Fille", "Garçon")) %>%
-  
-  # Nettoyage Livres (ST255)
-  filter(!is.na(ST255Q01JA) & ST255Q01JA != 9) %>%
-  mutate(
-    Nb_Livres = case_when(
-      ST255Q01JA == 1 ~ "0-10",
-      ST255Q01JA == 2 ~ "11-25",
-      ST255Q01JA == 3 ~ "26-100",
-      ST255Q01JA == 4 ~ "101-200",
-      ST255Q01JA == 5 ~ "201-500",
-      ST255Q01JA == 6 ~ "Plus de 500",
-      TRUE ~ NA_character_
-    ),
-    Nb_Livres = factor(Nb_Livres, levels = c("0-10", "11-25", "26-100", "101-200", "201-500", "Plus de 500"))
-  )
-```
-
-### Le capital culturel et matériel (Nombre de livres)
-
-Ce premier graphique illustre la relation entre le nombre de livres présents au domicile de l'élève et son score moyen en mathématiques.
-
-```{r}
-#| label: fig-livres
-#| fig-cap: "Scores en mathématiques selon les ressources au domicile"
-
-ggplot(df %>% filter(!is.na(Nb_Livres)), aes(x = Nb_Livres, y = MATH_MOYENNE, fill = Nb_Livres)) +
-  geom_boxplot(alpha = 0.7) +
-  theme_minimal() +
-  labs(
-    x = "Nombre de livres à la maison",
-    y = "Score moyen en Mathématiques",
-    caption = paste0("Source : PISA 2022, OCDE,
-    \nChamp : Élèves de 15 ans (nés entre 2005 et 2008) issus de 81 pays.")
-  ) +
-  theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-La lecture de cette boîte à moustaches (boxplot) révèle un gradient socio-scolaire extrêmement marqué. L'axe des abscisses, qui catégorise le nombre de livres au domicile (un indicateur classique du capital matériel et culturel), montre une corrélation positive évidente avec la distribution des scores en mathématiques (axe des ordonnées).
-
--Une progression linéaire des médianes : On observe que la médiane des scores s'élève systématiquement à chaque palier de ressources. Les élèves déclarant posséder "0 à 10 livres" présentent la médiane la plus faible (généralement située dans le bas de l'échelle PISA), tandis que ceux vivant dans un foyer avec "Plus de 500 livres" affichent la médiane la plus haute.
-
--La dispersion des scores : La position des "boîtes" (qui concentrent 50 % des effectifs centraux de chaque catégorie) est également révélatrice. On remarque souvent que le 1er quartile (le bas de la boîte) des élèves très favorisés (plus de 200 livres) est supérieur à la médiane, voire au 3ème quartile, des élèves les plus démunis (0-10 livres).
-
-Pour confirmer ces observations visuelles, nous croisons une variable quantitative continue (le score en maths) avec nos variables qualitatives à l'aide de tests d'Analyse de Variance (ANOVA).
-
-```{r}
-# Modèle ANOVA
-anova_livres <- aov(MATH_MOYENNE ~ Nb_Livres, data = df)
-summary(anova_livres)
-
-
-ss_livres <- summary(anova_livres)[[1]]$`Sum Sq`
-eta2_livres <- ss_livres[1] / sum(ss_livres)
-cat("Eta-carré du nombre de livres :", round(eta2_livres, 4), "\n")
-```
-
-Le test d'analyse de variance (ANOVA) révèle un Êta-carré de 0.2082. D'un point de vue statistique, ce résultat indique que près de 21 % des écarts de performance en mathématiques entre les élèves sont lié à l'indicateur du nombre de livres au domicile.
-
-Dans le champ des sciences sociales et de l'éducation, il s'agit d'une taille d'effet considérée comme très forte. Ce chiffre élevé démontre la puissance du déterminisme socio-culturel : l'accès aux ressources matérielles et culturelles dans l'environnement familial n'est pas un simple facteur d'influence, mais bien un prédicteur majeur de la réussite scolaire.
-
-Le second graphique porte sur une condition d'existence fondamentale : ne pas avoir faim.
-
-```{r}
-#| label: fig-faim
-#| fig-cap: "Scores en mathématiques selon la précarité alimentaire"
-
-ggplot(df %>% filter(!is.na(Faim_Frequence)), aes(x = Faim_Frequence, y = MATH_MOYENNE, fill = Faim_Frequence)) +
-  geom_boxplot(alpha = 0.7) +
-  theme_minimal() +
-  labs(
-    x = "Fréquence des repas sautés (30 derniers jours)",
-    y = "Score moyen en Mathématiques",
-    caption = paste0("Source : PISA 2022, OCDE,
-    \nChamp : Élèves de 15 ans (nés entre 2005 et 2008) issus de 81 pays.")
-  ) +
-  theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-Ce graphique aborde la précarité sous son angle le plus primaire : l'incapacité à se nourrir correctement par manque d'argent. La visualisation met en évidence une rupture franche dans les trajectoires scolaires dès l'apparition de ce facteur.
-
-L'effet "seuil" de la précarité : Le groupe majoritaire des élèves qui ne sautent "Jamais / Presque jamais" de repas affiche une distribution des scores tirée vers le haut, avec une médiane nettement supérieure aux autres groupes.
-
-Le décrochage des performances : Dès que l'élève bascule dans l'insécurité alimentaire, même de façon occasionnelle ("Environ 1 fois par semaine"). La médiane chute significativement, et la moustache inférieure s'étire vers les scores les plus bas de l'évaluation PISA. Les catégories d'insécurité sévère ("2-3 fois par semaine" et "Presque tous les jours") confirment ce maintien à un niveau de performance très faible.
-
-```{r}
-# Modèle ANOVA
-anova_faim <- aov(MATH_MOYENNE ~ Faim_Frequence, data = df)
-summary(anova_faim)
-
-
-ss_faim <- summary(anova_faim)[[1]]$`Sum Sq`
-eta2_faim <- ss_faim[1] / sum(ss_faim)
-cat("Eta-carré de l'insécurité alimentaire :", round(eta2_faim, 4), "\n")
-```
-
-Le test d'analyse de variance (ANOVA) indique un Êta-carré de 0.0508. Cela signifie qu'à elle seule, la fréquence de l'insécurité alimentaire explique un peu plus de 5 % (5,08 %) de la variance globale des scores en mathématiques.
-
-En sciences sociales, une valeur autour de 0.06 est considérée comme un effet de taille moyenne. Cependant, il faut remettre ce chiffre dans son contexte : la réussite en mathématiques est un processus cognitif complexe, influencé par des dizaines de facteurs (pédagogie, soutien familial, temps de travail, etc.). Qu'une seule variable, purement physiologique et mesurant un besoin primaire, parvienne à dicter 5 % de la note finale est un résultat particulièrement fort.
-
-Contrairement au 'nombre de livres' qui agit comme un indicateur global englobant le capital économique et culturel de toute la famille (expliquant \~20 % de la variance), l'insécurité alimentaire cible spécifiquement la frange la plus précaire des élèves. Ce résultat de 5 % prouve statistiquement ce que la pyramide de Maslow théorise : l'incapacité à combler un besoin physiologique fondamental (se nourrir) dresse une barrière immédiate et mesurable à la disponibilité cognitive (le focus) nécessaire pour les apprentissages scolaires.
-
-Une immense majorité des élèves n'a pas faim . La variable ne discrimine donc "que" le bas du spectre social. Expliquer 5 % de la variance totale de toute une population avec un phénomène qui ne touche qu'une minorité d'élèves est la preuve absolue que l'impact sur ces élèves spécifiques est dévastateur.
-
-L'analyse croisée des données de l'enquête PISA 2022 confirme de manière univoque notre hypothèse de départ : l'accès aux ressources matérielles reste un enjeu prédominant, voire déterminant, du succès scolaire en mathématiques.
-
-Au fil de cette partie, nous avons pu mettre en lumière que l'échec ou la réussite d'un élève ne relève pas de ses seules capacités cognitives innées, mais est lourdement dicté par son environnement extérieur, selon deux échelles distinctes :
-
-
-
-**1. Le déterminisme socio-culturel structurel (Le capital matériel)** L'étude du nombre de livres au domicile a démontré que le capital culturel et économique de la famille structure massivement les trajectoires d'apprentissage. Avec près de 21 % de la variance des scores en mathématiques expliquée par ce seul indicateur, nos résultats corroborent les théories de la reproduction sociale. L'école peine à compenser ces inégalités de départ : les élèves évoluant dans un environnement riche en ressources (matérielles, espace de travail, accès à la culture) disposent d'un avantage comparatif écrasant qui se traduit directement dans leurs résultats.
-
-**2. Le prérequis physiologique incontournable (Les conditions d'existence)** Plus alarmant encore, l'analyse de l'insécurité alimentaire a révélé l'impact foudroyant de la précarité primaire. Bien qu'elle ne touche qu'une minorité d'élèves, elle explique à elle seule plus de 5 % de la variance globale des scores.
-
-## B. La transmission familiale du capital scientifique explique les résultats en maths
-
-
-
-Les résultats suggèrent que les élèves issus de familles où les parents possèdent un niveau d'études supérieur obtiennent, en moyenne, de meilleurs scores en mathématiques. Ce phénomène illustre le poids du bagage académique familial dans la réussite scolaire.
-
-```{r}
-#| column: page
-#| fig-align: center
-
-df <- cbind(niveau_en_math,variable_Pisa)
-# On crée la variable du niveau d'études maximum dans la famille
-df <- df %>%
-  mutate(niveau_famille_max = pmin(ST005Q01JA, ST007Q01JA))
-
-mediane_niv_enf_fonc_niv_max_fam <- df %>%
-  filter(!is.na(niveau_famille_max)) %>%
-  group_by(niveau_famille_max) %>%
-  summarise(mediane = median(score_math, na.rm = TRUE)) %>%
-  mutate(niveau_famille_max = as.factor(niveau_famille_max))
-
-ggplot(data = mediane_niv_enf_fonc_niv_max_fam, mapping= aes(x = niveau_famille_max, y = mediane)) +
-  geom_point(size = 5, color = "red") +
-  scale_x_discrete(
-    limits = rev,
-    labels = c(
-    "1" = "Enseignement post-secondaire\nnon-supérieur / plus",
-    "2" = "Enseignement secondaire\n(2nd cycle)",
-    "3" = "Enseignement secondaire\n(1er cycle)",
-    "4" = "Élémentaire",
-    "5" = "Maternelle / moins"
-  )) +
-  labs(
-    title = "Performance en mathématiques selon le niveau d'étude maximum des parents",
-    x = "Niveau d'étude maximum des parents",
-    y = "Médiane des performances en mathématiques",
-    caption = paste0("Source : PISA 2022, OCDE,
-    \nChamp : Élèves de 15 ans (nés entre 2005 et 2008) issus de 81 pays.")
-  ) +
-  coord_flip() +
-  theme_minimal()
-```
-
-Pour dépasser la simple observation visuelle et confirmer cette tendance, nous avons réalisé une analyse de la variance (test ANOVA) accompagnée du calcul de l'Eta-carré ($\eta^2$). L'Eta-carré permet de mesurer la taille de l'effet, c'est-à-dire la proportion de la variance des scores en mathématiques qui est directement expliquée par le niveau d'études des parents.
-
-```{r}
-# Calcul de l'ANOVA
-modele_anova <- aov(score_math ~ as.factor(niveau_famille_max), data = df)
-anova_res <- summary(modele_anova)
-p_val <- anova_res[[1]][["Pr(>F)"]][1]
-
-# Calcul de l'Eta-carré
-coef_corr <- etaSquared(modele_anova)
-```
-
-P-value :
-
-```{r}
-print(p_val)
-```
-
-Taille de l'effet (Eta-carré) :
-
-```{r}
-print(coef_corr)
-```
-
-#### Interprétation
-La p-value étant largement inférieure au seuil de 0,05, nous pouvons affirmer que la différence de niveau en mathématiques selon le diplôme des parents est statistiquement significative.
-
-Par ailleurs, l'Eta-carré nous indique que le niveau d'études parental explique environ 7,1 % de la variance des résultats en mathématiques. Si ce pourcentage peut sembler numériquement modeste, il représente en réalité un effet notable en sciences sociales. Il confirme l'influence décisive du bagage académique familial, tout en rappelant logiquement que la réussite de l'élève dépend d'une multitude d'autres facteurs (environnement scolaire, pédagogie, travail personnel, etc.).
-
-### Première conclusion et hypothèse du capital culturel
-Le parcours académique des parents a donc un impact avéré sur le niveau en mathématiques des enfants. Cela peut s'expliquer par une transmission informelle des savoirs, un accompagnement scolaire plus aisé, ou encore une valorisation de la réussite scolaire davantage intériorisée par la famille.
-
-Pour approfondir cette dynamique, nous pouvons formuler l'hypothèse que ce niveau d'études se matérialise aussi par un environnement culturel plus riche au domicile. Dans la continuité des théories sur la reproduction sociale, le diplôme (qui correspond au capital culturel institutionnalisé) s'accompagne souvent de ressources intellectuelles et matérielles favorisant l'apprentissage (le capital culturel objectivé). Dans la partie précédente, nous avons d'ailleurs montré que les ressources matérielles étaient liées à la réussite en mathématiques.
-
-Croisons maintenant le niveau d'études des parents avec un indicateur classique de ce capital culturel : le nombre de livres présents au domicile.
-
-```{r}
-#| column: page
-#| fig-align: center
-#| fig-height: 5
-
-df_livres <- df %>%
-  filter(!is.na(niveau_famille_max) & !is.na(ST255Q01JA)) %>%
-  mutate(niveau_famille_max = as.factor(niveau_famille_max),
-         ST255Q01JA = as.factor(ST255Q01JA))
-
-ggplot(data = df_livres, mapping = aes(x = niveau_famille_max, fill = ST255Q01JA)) +
-  geom_bar(position = "fill") + 
-  scale_fill_brewer(palette = "Set3", 
-                    labels = c("1" = "Aucun livre", 
-                               "2" = "1-10 livres", 
-                               "3" = "11-25 livres", 
-                               "4" = "26-100 livres", 
-                               "5" = "101-200 livres", 
-                               "6" = "201-500 livres", 
-                               "7" = "> 500 livres")) +
-  scale_x_discrete(labels = c("1" = "Post-secondaire", 
-                              "2" = "Secondaire 2", 
-                              "3" = "Secondaire 1", 
-                              "4" = "Élémentaire", 
-                              "5" = "Maternelle / moins")) +
-  scale_y_continuous(labels = scales::percent_format()) +
-  labs(
-    title = "Relation entre le niveau d'études des parents et la présence de livres",
-    x = "Niveau d'étude max des parents",
-    y = "Proportion",
-    fill = "Nombre de livres",
-    caption = paste0("Source : PISA 2022, OCDE,
-    \nChamp : Élèves de 15 ans (nés entre 2005 et 2008) issus de 81 pays.")
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-Graphiquement, on observe une corrélation très claire entre le nombre de livres à la maison et le diplôme des parents : plus le diplôme est élevé, plus la proportion de familles disposant d'une grande bibliothèque augmente.
-
-Nous le vérifions avec un test d'indépendance du Chi-deux (Khi2) :
-
-```{r}
-# Création du tableau de contingence
-tableau <- table(df_livres$niveau_famille_max, df_livres$ST255Q01JA)
-
-# Calcul et affichage de la p-value
-test_chi2 <- chisq.test(tableau)
-print(test_chi2)
-```
-
-#### Interprétation
-La p-value étant extrêmement proche de zéro (largement inférieure à 0,05), nous rejetons l'hypothèse d'indépendance. Les deux variables sont très fortement dépendantes. Le niveau d'études maximum des parents est donc intimement corrélé à la mise en place d'un environnement culturel et matériel propice à l'apprentissage (ici, l'accès aux livres).
-
-Il est alors intéressant d'isoler le facteur de la richesse : à niveau de vie (ou richesse matérielle) égal, les enfants dont les parents sont les plus diplômés réussissent-ils toujours mieux en mathématiques ?
-
-```{r}
-#| column: page
-#| fig-align: center
-#| fig-width: 12
-#| fig-height: 6
-
-
-mediane_niv_enf_fonc_niv_max_fam_harmoniser <- df %>%
-  filter(!is.na(niveau_famille_max) & !is.na(ST259Q01JA)) %>%
-  group_by(niveau_famille_max, ST259Q01JA) %>%
-  summarise(mediane = median(score_math, na.rm = TRUE), .groups = "drop")
-
-ggplot(data = mediane_niv_enf_fonc_niv_max_fam_harmoniser, mapping = aes(
-    x = factor(niveau_famille_max), 
-    y = mediane,
-    group = ST259Q01JA, 
-    color = factor(ST259Q01JA))) +
-  #geom_line(alpha = 0.5, linewidth = 1) +
-  geom_point(size = 4) +
-  scale_x_discrete(
-    limits = rev,
-    labels = c(
-    "1" = "Enseignement\npost-secondaire",
-    "2" = "Enseignement secondaire\n(2nd cycle)",
-    "3" = "Enseignement secondaire\n(1er cycle)",
-    "4" = "Élémentaire",
-    "5" = "Maternelle / moins"
-  )) +
-  labs(
-    title = "Performance en maths selon le diplôme et la richesse des parents",
-    x = "Niveau d'étude max des parents",
-    y = "Médiane des performances en maths",
-    color = "Niveau de richesse \n( 1 = pauvre, 10 = riche )",
-    caption = paste0("Source : PISA 2022, OCDE,
-    \nChamp : Élèves de 15 ans (nés entre 2005 et 2008) issus de 81 pays.")
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-```
-
-Ce graphique est révélateur : en suivant n'importe quelle courbe de niveau de richesse, on observe toujours une tendance ascendante vers les plus hauts diplômes. Cela démontre que, même à niveau de vie égal, le niveau d'études des parents conserve un impact positif et distinct sur la performance en mathématiques de l'enfant. L'héritage intellectuel et scientifique ne se résume donc pas au seul confort économique.
-
-
-# II) L'élève : une personnalité, un caractère et une pensée qui assure un niveau mathématique
+# I) L'élève : une personnalité, un caractère et une pensée qui assure un niveau mathématique
 
 
 L'environnement et les différents "capital" ont ainsi une réelle corrélation avec la performance des élèves et nous avons solidement pu assurer le lien de causalité.  
@@ -914,6 +580,346 @@ La première partie a établi que les performances en mathématiques s’inscriv
 Dès lors, l’enjeu n’est plus d’opposer structure et agentivité, mais d’examiner leur articulation. La question devient : comment ces dimensions s’ordonnent-elles conjointement dans l’espace des élèves ? L’analyse multivariée conduite sur les données de l’enquête PISA 2022 vise précisément à répondre à cette interrogation en appréhendant simultanément ressources familiales et dispositions individuelles.
 
 L’hypothèse retenue est que l’excellence en mathématiques correspond à une position spécifique dans un espace structuré conjointement par les ressources socio-familiales et les dispositions psychosociales. Cet espace mettrait en évidence un principe de cumul des avantages — sociaux et subjectifs — tout en révélant l’existence de trajectoires différenciées vers la performance. Il ne s’agit donc ni d’additionner des effets séparés, ni de hiérarchiser a priori les facteurs, mais d’identifier la configuration empirique au sein de laquelle s’inscrit le profil des élèves performants.
+
+
+# II) L'environnement familial comme socle de la réussite des élèves en mathématiques
+
+## A. L'accès aux ressources matérielles reste un enjeux du succès scolaire {#mix}
+
+```{r, echo=FALSE, results="hide"}
+
+df_brut <- readRDS("pisa_restraint.rds")
+
+
+variables_a_garder <- c(
+  "ST004D01T",  # Sexe
+  "ST255Q01JA", # Nombre de livres
+  "ST258Q01JA", # Assez d'argent pour manger (Insécurité alimentaire)
+  "PV1MATH", "PV2MATH", "PV3MATH", "PV4MATH", "PV5MATH", 
+  "PV6MATH", "PV7MATH", "PV8MATH", "PV9MATH", "PV10MATH"
+)
+
+df_reduit <- df_brut %>% 
+  select(any_of(variables_a_garder))
+
+
+df <- df_reduit %>%
+  # Calcul de la moyenne en maths
+  mutate(MATH_MOYENNE = rowMeans(select(., starts_with("PV") & ends_with("MATH")), na.rm = TRUE)) %>%
+  
+
+
+  filter(!is.na(ST258Q01JA) & ST258Q01JA != 9) %>% 
+  mutate(
+    Faim_Frequence = case_when(
+      ST258Q01JA == 1 ~ "Jamais/Presque jamais",
+      ST258Q01JA == 2 ~ "Environ 1 fois/semaine",
+      ST258Q01JA == 3 ~ "2-3 fois/semaine",
+      ST258Q01JA == 4 ~ "Presque tous les jours",
+      TRUE ~ NA_character_
+    ),
+    Faim_Frequence = factor(Faim_Frequence, levels = c("Jamais/Presque jamais", 
+                                                       "Environ 1 fois/semaine", 
+                                                       "2-3 fois/semaine", 
+                                                       "Presque tous les jours")),
+    Insecurite_Alim = ifelse(ST258Q01JA > 1, "Oui", "Non")
+  ) %>%
+  
+  # Nettoyage Sexe (ST004)
+  filter(!is.na(ST004D01T)) %>%
+  mutate(Sexe = ifelse(ST004D01T == 1, "Fille", "Garçon")) %>%
+  
+  # Nettoyage Livres (ST255)
+  filter(!is.na(ST255Q01JA) & ST255Q01JA != 9) %>%
+  mutate(
+    Nb_Livres = case_when(
+      ST255Q01JA == 1 ~ "0-10",
+      ST255Q01JA == 2 ~ "11-25",
+      ST255Q01JA == 3 ~ "26-100",
+      ST255Q01JA == 4 ~ "101-200",
+      ST255Q01JA == 5 ~ "201-500",
+      ST255Q01JA == 6 ~ "Plus de 500",
+      TRUE ~ NA_character_
+    ),
+    Nb_Livres = factor(Nb_Livres, levels = c("0-10", "11-25", "26-100", "101-200", "201-500", "Plus de 500"))
+  )
+```
+
+### Le capital culturel et matériel (Nombre de livres)
+
+Ce premier graphique illustre la relation entre le nombre de livres présents au domicile de l'élève et son score moyen en mathématiques.
+
+```{r}
+#| label: fig-livres
+#| fig-cap: "Scores en mathématiques selon les ressources au domicile"
+
+ggplot(df %>% filter(!is.na(Nb_Livres)), aes(x = Nb_Livres, y = MATH_MOYENNE, fill = Nb_Livres)) +
+  geom_boxplot(alpha = 0.7) +
+  theme_minimal() +
+  labs(
+    x = "Nombre de livres à la maison",
+    y = "Score moyen en Mathématiques",
+    caption = paste0("Source : PISA 2022, OCDE,
+    \nChamp : Élèves de 15 ans (nés entre 2005 et 2008) issus de 81 pays.")
+  ) +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+La lecture de cette boîte à moustaches (boxplot) révèle un gradient socio-scolaire extrêmement marqué. L'axe des abscisses, qui catégorise le nombre de livres au domicile (un indicateur classique du capital matériel et culturel), montre une corrélation positive évidente avec la distribution des scores en mathématiques (axe des ordonnées).
+
+-Une progression linéaire des médianes : On observe que la médiane des scores s'élève systématiquement à chaque palier de ressources. Les élèves déclarant posséder "0 à 10 livres" présentent la médiane la plus faible (généralement située dans le bas de l'échelle PISA), tandis que ceux vivant dans un foyer avec "Plus de 500 livres" affichent la médiane la plus haute.
+
+-La dispersion des scores : La position des "boîtes" (qui concentrent 50 % des effectifs centraux de chaque catégorie) est également révélatrice. On remarque souvent que le 1er quartile (le bas de la boîte) des élèves très favorisés (plus de 200 livres) est supérieur à la médiane, voire au 3ème quartile, des élèves les plus démunis (0-10 livres).
+
+Pour confirmer ces observations visuelles, nous croisons une variable quantitative continue (le score en maths) avec nos variables qualitatives à l'aide de tests d'Analyse de Variance (ANOVA).
+
+```{r}
+# Modèle ANOVA
+anova_livres <- aov(MATH_MOYENNE ~ Nb_Livres, data = df)
+summary(anova_livres)
+
+
+ss_livres <- summary(anova_livres)[[1]]$`Sum Sq`
+eta2_livres <- ss_livres[1] / sum(ss_livres)
+cat("Eta-carré du nombre de livres :", round(eta2_livres, 4), "\n")
+```
+
+Le test d'analyse de variance (ANOVA) révèle un Êta-carré de 0.2082. D'un point de vue statistique, ce résultat indique que près de 21 % des écarts de performance en mathématiques entre les élèves sont lié à l'indicateur du nombre de livres au domicile.
+
+Dans le champ des sciences sociales et de l'éducation, il s'agit d'une taille d'effet considérée comme très forte. Ce chiffre élevé démontre la puissance du déterminisme socio-culturel : l'accès aux ressources matérielles et culturelles dans l'environnement familial n'est pas un simple facteur d'influence, mais bien un prédicteur majeur de la réussite scolaire.
+
+Le second graphique porte sur une condition d'existence fondamentale : ne pas avoir faim.
+
+```{r}
+#| label: fig-faim
+#| fig-cap: "Scores en mathématiques selon la précarité alimentaire"
+
+ggplot(df %>% filter(!is.na(Faim_Frequence)), aes(x = Faim_Frequence, y = MATH_MOYENNE, fill = Faim_Frequence)) +
+  geom_boxplot(alpha = 0.7) +
+  theme_minimal() +
+  labs(
+    x = "Fréquence des repas sautés (30 derniers jours)",
+    y = "Score moyen en Mathématiques",
+    caption = paste0("Source : PISA 2022, OCDE,
+    \nChamp : Élèves de 15 ans (nés entre 2005 et 2008) issus de 81 pays.")
+  ) +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Ce graphique aborde la précarité sous son angle le plus primaire : l'incapacité à se nourrir correctement par manque d'argent. La visualisation met en évidence une rupture franche dans les trajectoires scolaires dès l'apparition de ce facteur.
+
+L'effet "seuil" de la précarité : Le groupe majoritaire des élèves qui ne sautent "Jamais / Presque jamais" de repas affiche une distribution des scores tirée vers le haut, avec une médiane nettement supérieure aux autres groupes.
+
+Le décrochage des performances : Dès que l'élève bascule dans l'insécurité alimentaire, même de façon occasionnelle ("Environ 1 fois par semaine"). La médiane chute significativement, et la moustache inférieure s'étire vers les scores les plus bas de l'évaluation PISA. Les catégories d'insécurité sévère ("2-3 fois par semaine" et "Presque tous les jours") confirment ce maintien à un niveau de performance très faible.
+
+```{r}
+# Modèle ANOVA
+anova_faim <- aov(MATH_MOYENNE ~ Faim_Frequence, data = df)
+summary(anova_faim)
+
+
+ss_faim <- summary(anova_faim)[[1]]$`Sum Sq`
+eta2_faim <- ss_faim[1] / sum(ss_faim)
+cat("Eta-carré de l'insécurité alimentaire :", round(eta2_faim, 4), "\n")
+```
+
+Le test d'analyse de variance (ANOVA) indique un Êta-carré de 0.0508. Cela signifie qu'à elle seule, la fréquence de l'insécurité alimentaire explique un peu plus de 5 % (5,08 %) de la variance globale des scores en mathématiques.
+
+En sciences sociales, une valeur autour de 0.06 est considérée comme un effet de taille moyenne. Cependant, il faut remettre ce chiffre dans son contexte : la réussite en mathématiques est un processus cognitif complexe, influencé par des dizaines de facteurs (pédagogie, soutien familial, temps de travail, etc.). Qu'une seule variable, purement physiologique et mesurant un besoin primaire, parvienne à dicter 5 % de la note finale est un résultat particulièrement fort.
+
+Contrairement au 'nombre de livres' qui agit comme un indicateur global englobant le capital économique et culturel de toute la famille (expliquant \~20 % de la variance), l'insécurité alimentaire cible spécifiquement la frange la plus précaire des élèves. Ce résultat de 5 % prouve statistiquement ce que la pyramide de Maslow théorise : l'incapacité à combler un besoin physiologique fondamental (se nourrir) dresse une barrière immédiate et mesurable à la disponibilité cognitive (le focus) nécessaire pour les apprentissages scolaires.
+
+Une immense majorité des élèves n'a pas faim . La variable ne discrimine donc "que" le bas du spectre social. Expliquer 5 % de la variance totale de toute une population avec un phénomène qui ne touche qu'une minorité d'élèves est la preuve absolue que l'impact sur ces élèves spécifiques est dévastateur.
+
+L'analyse croisée des données de l'enquête PISA 2022 confirme de manière univoque notre hypothèse de départ : l'accès aux ressources matérielles reste un enjeu prédominant, voire déterminant, du succès scolaire en mathématiques.
+
+Au fil de cette partie, nous avons pu mettre en lumière que l'échec ou la réussite d'un élève ne relève pas de ses seules capacités cognitives innées, mais est lourdement dicté par son environnement extérieur, selon deux échelles distinctes :
+
+
+
+**1. Le déterminisme socio-culturel structurel (Le capital matériel)** L'étude du nombre de livres au domicile a démontré que le capital culturel et économique de la famille structure massivement les trajectoires d'apprentissage. Avec près de 21 % de la variance des scores en mathématiques expliquée par ce seul indicateur, nos résultats corroborent les théories de la reproduction sociale. L'école peine à compenser ces inégalités de départ : les élèves évoluant dans un environnement riche en ressources (matérielles, espace de travail, accès à la culture) disposent d'un avantage comparatif écrasant qui se traduit directement dans leurs résultats.
+
+**2. Le prérequis physiologique incontournable (Les conditions d'existence)** Plus alarmant encore, l'analyse de l'insécurité alimentaire a révélé l'impact foudroyant de la précarité primaire. Bien qu'elle ne touche qu'une minorité d'élèves, elle explique à elle seule plus de 5 % de la variance globale des scores.
+
+## B. La transmission familiale du capital scientifique explique les résultats en maths
+
+
+
+Les résultats suggèrent que les élèves issus de familles où les parents possèdent un niveau d'études supérieur obtiennent, en moyenne, de meilleurs scores en mathématiques. Ce phénomène illustre le poids du bagage académique familial dans la réussite scolaire.
+
+```{r}
+#| column: page
+#| fig-align: center
+
+df <- cbind(niveau_en_math,variable_Pisa)
+# On crée la variable du niveau d'études maximum dans la famille
+df <- df %>%
+  mutate(niveau_famille_max = pmin(ST005Q01JA, ST007Q01JA))
+
+mediane_niv_enf_fonc_niv_max_fam <- df %>%
+  filter(!is.na(niveau_famille_max)) %>%
+  group_by(niveau_famille_max) %>%
+  summarise(mediane = median(score_math, na.rm = TRUE)) %>%
+  mutate(niveau_famille_max = as.factor(niveau_famille_max))
+
+ggplot(data = mediane_niv_enf_fonc_niv_max_fam, mapping= aes(x = niveau_famille_max, y = mediane)) +
+  geom_point(size = 5, color = "red") +
+  scale_x_discrete(
+    limits = rev,
+    labels = c(
+    "1" = "Enseignement post-secondaire\nnon-supérieur / plus",
+    "2" = "Enseignement secondaire\n(2nd cycle)",
+    "3" = "Enseignement secondaire\n(1er cycle)",
+    "4" = "Élémentaire",
+    "5" = "Maternelle / moins"
+  )) +
+  labs(
+    title = "Performance en mathématiques selon le niveau d'étude maximum des parents",
+    x = "Niveau d'étude maximum des parents",
+    y = "Médiane des performances en mathématiques",
+    caption = paste0("Source : PISA 2022, OCDE,
+    \nChamp : Élèves de 15 ans (nés entre 2005 et 2008) issus de 81 pays.")
+  ) +
+  coord_flip() +
+  theme_minimal()
+```
+
+Pour dépasser la simple observation visuelle et confirmer cette tendance, nous avons réalisé une analyse de la variance (test ANOVA) accompagnée du calcul de l'Eta-carré ($\eta^2$). L'Eta-carré permet de mesurer la taille de l'effet, c'est-à-dire la proportion de la variance des scores en mathématiques qui est directement expliquée par le niveau d'études des parents.
+
+```{r}
+# Calcul de l'ANOVA
+modele_anova <- aov(score_math ~ as.factor(niveau_famille_max), data = df)
+anova_res <- summary(modele_anova)
+p_val <- anova_res[[1]][["Pr(>F)"]][1]
+
+# Calcul de l'Eta-carré
+coef_corr <- etaSquared(modele_anova)
+```
+
+P-value :
+
+```{r}
+print(p_val)
+```
+
+Taille de l'effet (Eta-carré) :
+
+```{r}
+print(coef_corr)
+```
+
+#### Interprétation
+La p-value étant largement inférieure au seuil de 0,05, nous pouvons affirmer que la différence de niveau en mathématiques selon le diplôme des parents est statistiquement significative.
+
+Par ailleurs, l'Eta-carré nous indique que le niveau d'études parental explique environ 7,1 % de la variance des résultats en mathématiques. Si ce pourcentage peut sembler numériquement modeste, il représente en réalité un effet notable en sciences sociales. Il confirme l'influence décisive du bagage académique familial, tout en rappelant logiquement que la réussite de l'élève dépend d'une multitude d'autres facteurs (environnement scolaire, pédagogie, travail personnel, etc.).
+
+### Première conclusion et hypothèse du capital culturel
+Le parcours académique des parents a donc un impact avéré sur le niveau en mathématiques des enfants. Cela peut s'expliquer par une transmission informelle des savoirs, un accompagnement scolaire plus aisé, ou encore une valorisation de la réussite scolaire davantage intériorisée par la famille.
+
+Pour approfondir cette dynamique, nous pouvons formuler l'hypothèse que ce niveau d'études se matérialise aussi par un environnement culturel plus riche au domicile. Dans la continuité des théories sur la reproduction sociale, le diplôme (qui correspond au capital culturel institutionnalisé) s'accompagne souvent de ressources intellectuelles et matérielles favorisant l'apprentissage (le capital culturel objectivé). Dans la partie précédente, nous avons d'ailleurs montré que les ressources matérielles étaient liées à la réussite en mathématiques.
+
+Croisons maintenant le niveau d'études des parents avec un indicateur classique de ce capital culturel : le nombre de livres présents au domicile.
+
+```{r}
+#| column: page
+#| fig-align: center
+#| fig-height: 5
+
+df_livres <- df %>%
+  filter(!is.na(niveau_famille_max) & !is.na(ST255Q01JA)) %>%
+  mutate(niveau_famille_max = as.factor(niveau_famille_max),
+         ST255Q01JA = as.factor(ST255Q01JA))
+
+ggplot(data = df_livres, mapping = aes(x = niveau_famille_max, fill = ST255Q01JA)) +
+  geom_bar(position = "fill") + 
+  scale_fill_brewer(palette = "Set3", 
+                    labels = c("1" = "Aucun livre", 
+                               "2" = "1-10 livres", 
+                               "3" = "11-25 livres", 
+                               "4" = "26-100 livres", 
+                               "5" = "101-200 livres", 
+                               "6" = "201-500 livres", 
+                               "7" = "> 500 livres")) +
+  scale_x_discrete(labels = c("1" = "Post-secondaire", 
+                              "2" = "Secondaire 2", 
+                              "3" = "Secondaire 1", 
+                              "4" = "Élémentaire", 
+                              "5" = "Maternelle / moins")) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(
+    title = "Relation entre le niveau d'études des parents et la présence de livres",
+    x = "Niveau d'étude max des parents",
+    y = "Proportion",
+    fill = "Nombre de livres",
+    caption = paste0("Source : PISA 2022, OCDE,
+    \nChamp : Élèves de 15 ans (nés entre 2005 et 2008) issus de 81 pays.")
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Graphiquement, on observe une corrélation très claire entre le nombre de livres à la maison et le diplôme des parents : plus le diplôme est élevé, plus la proportion de familles disposant d'une grande bibliothèque augmente.
+
+Nous le vérifions avec un test d'indépendance du Chi-deux (Khi2) :
+
+```{r}
+# Création du tableau de contingence
+tableau <- table(df_livres$niveau_famille_max, df_livres$ST255Q01JA)
+
+# Calcul et affichage de la p-value
+test_chi2 <- chisq.test(tableau)
+print(test_chi2)
+```
+
+#### Interprétation
+La p-value étant extrêmement proche de zéro (largement inférieure à 0,05), nous rejetons l'hypothèse d'indépendance. Les deux variables sont très fortement dépendantes. Le niveau d'études maximum des parents est donc intimement corrélé à la mise en place d'un environnement culturel et matériel propice à l'apprentissage (ici, l'accès aux livres).
+
+Il est alors intéressant d'isoler le facteur de la richesse : à niveau de vie (ou richesse matérielle) égal, les enfants dont les parents sont les plus diplômés réussissent-ils toujours mieux en mathématiques ?
+
+```{r}
+#| column: page
+#| fig-align: center
+#| fig-width: 12
+#| fig-height: 6
+
+
+mediane_niv_enf_fonc_niv_max_fam_harmoniser <- df %>%
+  filter(!is.na(niveau_famille_max) & !is.na(ST259Q01JA)) %>%
+  group_by(niveau_famille_max, ST259Q01JA) %>%
+  summarise(mediane = median(score_math, na.rm = TRUE), .groups = "drop")
+
+ggplot(data = mediane_niv_enf_fonc_niv_max_fam_harmoniser, mapping = aes(
+    x = factor(niveau_famille_max), 
+    y = mediane,
+    group = ST259Q01JA, 
+    color = factor(ST259Q01JA))) +
+  #geom_line(alpha = 0.5, linewidth = 1) +
+  geom_point(size = 4) +
+  scale_x_discrete(
+    limits = rev,
+    labels = c(
+    "1" = "Enseignement\npost-secondaire",
+    "2" = "Enseignement secondaire\n(2nd cycle)",
+    "3" = "Enseignement secondaire\n(1er cycle)",
+    "4" = "Élémentaire",
+    "5" = "Maternelle / moins"
+  )) +
+  labs(
+    title = "Performance en maths selon le diplôme et la richesse des parents",
+    x = "Niveau d'étude max des parents",
+    y = "Médiane des performances en maths",
+    color = "Niveau de richesse \n( 1 = pauvre, 10 = riche )",
+    caption = paste0("Source : PISA 2022, OCDE,
+    \nChamp : Élèves de 15 ans (nés entre 2005 et 2008) issus de 81 pays.")
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+```
+
+Ce graphique est révélateur : en suivant n'importe quelle courbe de niveau de richesse, on observe toujours une tendance ascendante vers les plus hauts diplômes. Cela démontre que, même à niveau de vie égal, le niveau d'études des parents conserve un impact positif et distinct sur la performance en mathématiques de l'enfant. L'héritage intellectuel et scientifique ne se résume donc pas au seul confort économique.
+
+
+
 
 # III) La performance en mathématiques résulte d’une position spécifique dans un espace structuré par les ressources familiales et les dispositions psychosociales
 
