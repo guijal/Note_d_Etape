@@ -109,8 +109,6 @@ RICCIARDI Olivier\\
 
 \tableofcontents
 
-#12345678910
-
 I) L’élève : une personnalité, un caractère et une pensée qui assure un niveau mathématique 
   A. Le sexe une différence fondamentale.
   B. Le “self-made” student ? Une analyse psychosociale de la prophétie auto-réalisatrice
@@ -204,7 +202,6 @@ L'environnement et les différents "capital" ont ainsi une réelle corrélation 
 Dans l'optique de décrire des profils plus complets des élèves, Nous allons chercher des paramètres psychologiques, psychosociaux, plus centrés sur l'élève lui-même et son état d'esprit.  
 
 ## A. Le sexe, une différence fondamentale ?
-# TEST ICICICICIICICIIC
 
 ```{r}
 
