@@ -180,6 +180,9 @@ library(ggplot2)
 library(tidyverse)
 library(effectsize)
 library(lsr)
+library(FactoMineR)
+library(cluster)
+library(VarSelLCM)
 
 var_select = read_excel("question_select.xlsx")
 
@@ -1244,6 +1247,22 @@ results_quad <- data.frame(
 print(results_quad)
 ```
 L’observation des élèves du top 10 % en mathématiques confirme dans l’ensemble ce que l’on pouvait anticiper : la majorité se situe dans la zone où le capital familial et les dispositions personnelles sont élevés. Cependant, quelques exceptions apparaissent, montrant que certains élèves réussissent malgré un capital familial modeste ou que d’autres ne performent pas pleinement malgré des ressources favorables. Ces exceptions conduisent à nuancer l’hypothèse d’un modèle unique de réussite et à envisager la nécessité d’une typologie des profils. L’excellence en mathématiques n’est pas monolithique et semble pouvoir se décliner en plusieurs trajectoires : une voie « héritière », combinant fort capital et forte confiance ; une voie « résiliente », caractérisée par un capital modeste mais une auto-efficacité élevée ; et éventuellement une voie « structure compensée », où un capital familial important coexiste avec des dispositions moyennes. Une classification de ce type permettrait d’identifier et de caractériser distinctement ces profils, offrant ainsi un outil plus précis pour comprendre la diversité des trajectoires vers la performance.
+
+
+## B. Le profil de l'éléve performant en maths (classification) :
+
+```{r}
+
+# 1. Sélection et nettoyage (on enlève les lignes avec des NA sur ces variables)
+data_cluster <- dataset_pisa %>%
+  select(CNT, ST004D01T, ST013Q01IS, PARED, MATHEFF, TEACHSUP, PERSSEV) %>%
+  drop_na()
+
+# transforme nos données en données centré réduite :
+dataTocluster <- scale(df)
+
+```
+
 
 
 
