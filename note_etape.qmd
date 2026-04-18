@@ -204,7 +204,12 @@ Dans l'optique de décrire des profils plus complets des élèves, Nous allons c
 
 ## A. Le sexe, une différence fondamentale ?
 
-```{r}
+
+
+```{r,include = FALSE}
+
+
+#enlever le graphique si jamais on à pas assez de place
 
 niveau_selon_sex <- df %>%
   filter(!is.na(ST004D01T)) %>%
@@ -224,18 +229,71 @@ ggplot(data = niveau_selon_sex, mapping = aes(y = moyenne, x = ST004D01T)) +
 
 ```
 
-
-
-Un homme est
-```{r}
+```{r, include = FALSE}
+#donne le pourcentage
 niv_femme = niveau_selon_sex[[1,"moyenne"]]
 niv_homme = niveau_selon_sex[[2,"moyenne"]]
 ecart = (abs(niv_femme- niv_homme) / niv_femme)*100
 print(ecart)
 ```
-fois plus performant qu'une femme en mathématique. Cela nous montre que ce n'est pas une caractéristique majeure pour la performance en mathématique bien qu'il y ait des ingégalité de genre dans le monde. Cela peut être car l'étude est réalisé sur des individu de 16ans. On a donc pas encore une sureprésentation de sexe masculin dans le domaine des sciences car le choix d'étudier les sciences n'est pas encore fait.
 
-## A. Le "self-made" student ? Une analyse psychosociale de la prophétie auto-réalisatrice
+Un homme est 1,3 % plus performant qu'une femme en mathématique. Cela montre que ce n'est pas une caractéristique majeure pour la performance en mathématique bien qu'il y ait des ingégalités de genre dans le monde. L'étude concerne une population agée de 16ans ainsi on peut en déduire que les inégalités on maths ce font après cet age. Néanmoins il est toujours possible que cette caractéristique soit déterminante pour les meilleurs éléves. Si on regarde le dernier decile on obtient une différence de 1,1%, et le dernier centile 0,4 %. Ainsi ce n'est vraiment pas un facteur déterminant et on peut l'oublier pour le reste de cette étude. Néenmoins si on utilise les données d'une population plus agée ce caractére doit à nouveau être étudié. De même si on se focalise sur un pays particulier il est interressant.
+
+
+```{r, include=FALSE}
+
+
+#enlever le graphique si jamais on à pas assez de place
+
+
+niveau_selon_sex <- df %>%
+  filter(!is.na(ST004D01T)) %>%
+  mutate(decile = ntile(score_math, 10)) %>%
+  group_by(ST004D01T, decile) %>%
+  summarise(moyenne = mean(score_math))
+
+niveau_selon_sex$ST004D01T <- factor(niveau_selon_sex$ST004D01T)
+
+ggplot(data = niveau_selon_sex, mapping = aes(y = moyenne, x = ST004D01T)) + 
+  geom_point(size = 4, color = "red") +
+  scale_x_discrete(
+    labels = c(
+      "1" = "Femme",
+      "2" = "Homme"
+    )
+  )
+
+```
+
+```{r,include=FALSE}
+#donne le pourcentage
+niv_femme = niveau_selon_sex[(niveau_selon_sex$decile == 10) & (niveau_selon_sex$ST004D01T == 1),"moyenne"]
+niv_homme = niveau_selon_sex[(niveau_selon_sex$decile == 10) & (niveau_selon_sex$ST004D01T == 2),"moyenne"]
+ecart = (abs(niv_femme- niv_homme) / niv_femme)*100
+print(ecart)
+```
+```{r,include = FALSE}
+
+
+niveau_selon_sex <- df %>%
+  filter(!is.na(ST004D01T)) %>%
+  mutate(centile = ntile(score_math, 100)) %>%
+  group_by(ST004D01T, centile) %>%
+  summarise(moyenne = mean(score_math))
+
+niveau_selon_sex$ST004D01T <- factor(niveau_selon_sex$ST004D01T)
+
+#donne le pourcentage centile
+niv_femme = niveau_selon_sex[(niveau_selon_sex$centile == 100) & (niveau_selon_sex$ST004D01T == 1),"moyenne"]
+niv_homme = niveau_selon_sex[(niveau_selon_sex$centile == 100) & (niveau_selon_sex$ST004D01T == 2),"moyenne"]
+ecart = (abs(niv_femme- niv_homme) / niv_femme)*100
+print(ecart)
+```
+
+
+
+
+## B. Le "self-made" student ? Une analyse psychosociale de la prophétie auto-réalisatrice
 
 
 D'après Chavez [@chavez25], il existe une "prophétie autoréalisatrice" : La croyance en notre réussite nous conduit à celle-ci plus facilement. Dans notre cas, les dispositions psychologiques des élèves joueraient sur la performance en mathématiques. C'est ce que nous allons analyser dans cette partie.
@@ -496,7 +554,7 @@ En somme, la corrélation entre la confiance de réussite est bien apparente sur
 
 Pour chercher des réelles causalité d'une confiance qui pourrait amener à performer il faut étudier la psychologie et la manière de penser des élèves et ce dans la vie de tous les jours.
 
-## B. Une vision psychologique et personnelle adaptée pour un meilleur niveau ?
+## C. Une vision psychologique et personnelle adaptée pour un meilleur niveau ?
 
 Dans cette partie nous chercherons à voir si certains états d'esprit, certaines manières de penser ont un lien avec les performances mathématiques. En particulier, est-ce que la perception des capacités des élèves pourrait être un facteur expliquant un bon niveau en mathématiques
 
